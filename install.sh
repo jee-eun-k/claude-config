@@ -1,0 +1,190 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+GLOBAL_DIR="$HOME/.claude"
+WORKSPACE_DIR="$HOME/Development/.claude"
+BMAD_DIR="$HOME/Development/_bmad"
+EVERYTHING_CC_DIR="$HOME/Development/everything-claude-code"
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+
+# ─── helpers ──────────────────────────────────────────────────────────────────
+
+log()  { echo "  $*"; }
+ok()   { echo "  [ok] $*"; }
+warn() { echo "  [warn] $*" >&2; }
+
+# Back up a file or directory, then replace it with a symlink
+# Usage: make_symlink <real_path> <link_target>
+make_symlink() {
+  local real_path="$1"   # path that should become (or already is) a symlink
+  local link_target="$2" # what the symlink should point to
+
+  if [ -L "$real_path" ]; then
+    local current_target
+    current_target="$(readlink "$real_path")"
+    if [ "$current_target" = "$link_target" ]; then
+      ok "Already linked: $real_path"
+      return 0
+    else
+      warn "Relinking: $real_path (was → $current_target)"
+      rm "$real_path"
+    fi
+  elif [ -e "$real_path" ]; then
+    local backup="${real_path}.backup.$TIMESTAMP"
+    log "Backing up: $real_path → $backup"
+    mv "$real_path" "$backup"
+  fi
+
+  mkdir -p "$(dirname "$real_path")"
+  ln -s "$link_target" "$real_path"
+  ok "Linked: $real_path → $link_target"
+}
+
+# ─── subcommands ──────────────────────────────────────────────────────────────
+
+cmd_links_only() {
+  echo ""
+  echo "── global (~/.claude) ────────────────────────────────────────────────"
+
+  make_symlink "$GLOBAL_DIR/CLAUDE.md"             "$REPO_DIR/global/CLAUDE.md"
+  make_symlink "$GLOBAL_DIR/settings.json"         "$REPO_DIR/global/settings.json"
+  make_symlink "$GLOBAL_DIR/settings.local.json"   "$REPO_DIR/global/settings.local.json"
+  make_symlink "$GLOBAL_DIR/agents"                "$REPO_DIR/global/agents"
+  make_symlink "$GLOBAL_DIR/rules"                 "$REPO_DIR/global/rules"
+  make_symlink "$GLOBAL_DIR/commands"              "$REPO_DIR/global/commands"
+  make_symlink "$GLOBAL_DIR/hooks/hooks.json"      "$REPO_DIR/global/hooks/hooks.json"
+  make_symlink "$GLOBAL_DIR/bin/codeagent-wrapper" "$REPO_DIR/global/bin/codeagent-wrapper"
+
+  echo ""
+  echo "── workspace (~/Development/.claude) ────────────────────────────────"
+
+  make_symlink "$WORKSPACE_DIR/agents"             "$REPO_DIR/workspace/agents"
+  make_symlink "$WORKSPACE_DIR/commands"           "$REPO_DIR/workspace/commands"
+  make_symlink "$WORKSPACE_DIR/hooks/hooks.json"   "$REPO_DIR/workspace/hooks/hooks.json"
+  make_symlink "$WORKSPACE_DIR/mcp-configs"        "$REPO_DIR/workspace/mcp-configs"
+  make_symlink "$WORKSPACE_DIR/rules"              "$REPO_DIR/workspace/rules"
+  make_symlink "$WORKSPACE_DIR/skills"             "$REPO_DIR/workspace/skills"
+  make_symlink "$WORKSPACE_DIR/settings.local.json" "$REPO_DIR/workspace/settings.local.json"
+
+  echo ""
+  echo "── bmad (~/Development/_bmad) ────────────────────────────────────────"
+
+  make_symlink "$BMAD_DIR" "$REPO_DIR/bmad"
+
+  echo ""
+  echo "── mcp-gw submodule ──────────────────────────────────────────────────"
+  if [ -d "$REPO_DIR/mcp-gw/.git" ] || [ -f "$REPO_DIR/mcp-gw/.git" ]; then
+    ok "mcp-gw submodule already initialized"
+  else
+    log "Initializing mcp-gw submodule..."
+    git -C "$REPO_DIR" submodule update --init --recursive
+    ok "mcp-gw submodule initialized"
+  fi
+
+  echo ""
+  echo "Done. All symlinks created."
+}
+
+cmd_inject_mcp() {
+  echo ""
+  echo "── inject-mcp ────────────────────────────────────────────────────────"
+
+  local secrets_file="$REPO_DIR/secrets/mcp-servers.local.json"
+  local claude_json="$HOME/.claude.json"
+
+  if [ ! -f "$secrets_file" ]; then
+    echo ""
+    echo "ERROR: secrets/mcp-servers.local.json not found."
+    echo "  Run: cp mcp-servers.json.template secrets/mcp-servers.local.json"
+    echo "  Then fill in all \${PLACEHOLDER} values."
+    exit 1
+  fi
+
+  if ! jq -e '.mcpServers' "$secrets_file" > /dev/null 2>&1; then
+    echo "ERROR: secrets/mcp-servers.local.json is not valid JSON or missing mcpServers key."
+    exit 1
+  fi
+
+  if [ ! -f "$claude_json" ]; then
+    warn "~/.claude.json not found. Launch Claude Code once to create it, then re-run inject-mcp."
+    exit 1
+  fi
+
+  local backup="$claude_json.backup.$TIMESTAMP"
+  cp "$claude_json" "$backup"
+  log "Backed up ~/.claude.json → $backup"
+
+  local new_servers
+  new_servers="$(jq '.mcpServers' "$secrets_file")"
+
+  jq --argjson servers "$new_servers" '.mcpServers = $servers' "$claude_json" > "${claude_json}.tmp"
+  mv "${claude_json}.tmp" "$claude_json"
+
+  ok "mcpServers written to ~/.claude.json"
+  echo ""
+  echo "Active MCP servers:"
+  jq -r '.mcpServers | keys[]' "$claude_json" | sed 's/^/  - /'
+}
+
+cmd_clone_extras() {
+  echo ""
+  echo "── extra repos ───────────────────────────────────────────────────────"
+
+  if [ ! -d "$EVERYTHING_CC_DIR" ]; then
+    log "Cloning everything-claude-code..."
+    git clone git@github.com:affaan-m/everything-claude-code.git "$EVERYTHING_CC_DIR"
+    ok "Cloned everything-claude-code"
+  else
+    ok "everything-claude-code already present"
+  fi
+
+  if [ ! -d "$HOME/Development/ticktick-mcp" ]; then
+    warn "ticktick-mcp not found at ~/Development/ticktick-mcp — clone manually if needed"
+  else
+    ok "ticktick-mcp present"
+  fi
+}
+
+cmd_all() {
+  cmd_clone_extras
+  cmd_links_only
+  cmd_inject_mcp
+}
+
+# ─── usage ────────────────────────────────────────────────────────────────────
+
+usage() {
+  echo "Usage: $0 <command>"
+  echo ""
+  echo "Commands:"
+  echo "  all          Full first-time setup (clone extras + links + inject-mcp)"
+  echo "  links-only   Create symlinks only (safe to re-run)"
+  echo "  inject-mcp   Write mcpServers from secrets/ into ~/.claude.json"
+  echo ""
+  echo "New machine workflow:"
+  echo "  1. git clone git@github.com:jee-eun-k/claude-config.git ~/Development/claude-config"
+  echo "  2. cd ~/Development/claude-config"
+  echo "  3. cp mcp-servers.json.template secrets/mcp-servers.local.json"
+  echo "  4. # Fill in secrets/mcp-servers.local.json"
+  echo "  5. # Copy mcp-gw/.env.example → mcp-gw/.env and fill in"
+  echo "  6. ./install.sh all"
+  echo "  7. cd ~/Development/mcp-gw && docker compose up -d"
+}
+
+# ─── entry point ──────────────────────────────────────────────────────────────
+
+COMMAND="${1:-help}"
+
+case "$COMMAND" in
+  all)         cmd_all ;;
+  links-only)  cmd_links_only ;;
+  inject-mcp)  cmd_inject_mcp ;;
+  help|--help) usage ;;
+  *)
+    echo "Unknown command: $COMMAND"
+    echo ""
+    usage
+    exit 1
+    ;;
+esac

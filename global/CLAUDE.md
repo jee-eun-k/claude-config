@@ -1,0 +1,4 @@
+- Always discuss with gemini when facing some complex issue. you can access to it by cli command 'gemini'
+- When planning, always get OpenCode's Sisyphus' version of the plan as well (via `opencode` CLI) and integrate it with Claude's plan. Then consult with Gemini (via `gemini` CLI) with the combined output.
+  - **Usage**: `opencode run "your prompt here"` (non-interactive mode, works inside Claude Code sessions)
+  - Do NOT call `opencode` without the `run` subcommand — it launches an interactive TUI that will hang.

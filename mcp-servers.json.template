@@ -1,0 +1,70 @@
+{
+  "_readme": "Copy this file to secrets/mcp-servers.local.json and fill in all ${PLACEHOLDER} values. Then run: ./install.sh inject-mcp",
+  "mcpServers": {
+    "sequential-thinking": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "env": {}
+    },
+    "serena": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "--from", "git+https://github.com/oraios/serena",
+        "serena", "start-mcp-server",
+        "--context", "ide-assistant",
+        "--enable-web-dashboard", "False"
+      ],
+      "env": {}
+    },
+    "filesystem": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "${DEVELOPMENT_DIR}"],
+      "env": {},
+      "_note": "Set DEVELOPMENT_DIR to your projects root, e.g. /Users/yourname/Development"
+    },
+    "everything-bundle": {
+      "type": "stdio",
+      "command": "${NODE_PATH}",
+      "args": ["${EVERYTHING_CLAUDE_CODE_DIR}/index.js"],
+      "env": {},
+      "_note": "NODE_PATH: run 'which node'. EVERYTHING_CLAUDE_CODE_DIR: path to everything-claude-code clone"
+    },
+    "infra-gateway": {
+      "type": "sse",
+      "url": "http://localhost:8811/sse",
+      "_note": "Run: cd ~/Development/mcp-gw && docker compose up -d"
+    },
+    "notebooklm-mcp": {
+      "type": "stdio",
+      "command": "notebooklm-mcp",
+      "args": [],
+      "env": {}
+    },
+    "ticktick": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run", "--directory", "${TICKTICK_MCP_DIR}",
+        "-m", "ticktick_mcp.cli", "run"
+      ],
+      "env": {
+        "TICKTICK_CLIENT_ID": "${TICKTICK_CLIENT_ID}",
+        "TICKTICK_CLIENT_SECRET": "${TICKTICK_CLIENT_SECRET}",
+        "TICKTICK_ACCESS_TOKEN": "${TICKTICK_ACCESS_TOKEN}"
+      },
+      "_note": "TICKTICK_MCP_DIR: path to ticktick-mcp clone. Tokens from ~/.claude.json or re-auth via: uv run -m ticktick_mcp.cli auth"
+    },
+    "github": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+      },
+      "_note": "Create PAT at github.com/settings/tokens with repo + workflow scopes"
+    }
+  }
+}

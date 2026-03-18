@@ -1,0 +1,31 @@
+# Secrets — never commit
+secrets/
+!secrets/.gitkeep
+!secrets/README.md
+
+# Claude runtime state
+global/history.jsonl
+global/transcripts/
+global/sessions/
+global/plans/
+global/cache/
+global/statsig/
+global/todos/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Node
+node_modules/

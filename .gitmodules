@@ -1,0 +1,3 @@
+[submodule "mcp-gw"]
+	path = mcp-gw
+	url = git@github.com:jee-eun-k/mcp-gw.git
