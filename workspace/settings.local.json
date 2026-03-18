@@ -62,7 +62,14 @@
       "Bash(bash install.sh clean-backups)",
       "Bash(bash install.sh links-only)",
       "Bash(ls -d ~/Development/_bmad.backup.*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(bash install.sh check-drift)",
+      "Bash(gemini \"I''m creating a printable wall reference guide for my Claude Code development setup. It''s a layered system::*)",
+      "Bash(opencode run:*)",
+      "mcp__filesystem__search_files",
+      "Bash(find /Users/alexa/Development/claude-config -type f \\\\\\(-name *.sh -o -name *.md -o -name *.json -o -name *.yaml -o -name *.yml \\\\\\))",
+      "Bash(grep -r skills/ /Users/alexa/Development/claude-config --include=*.sh --include=*.md --include=*.json --include=*.yaml --include=*.yml)",
+      "Bash(grep -r skill /Users/alexa/Development/claude-config/docs --include=*.md)"
     ],
     "deny": []
   }
