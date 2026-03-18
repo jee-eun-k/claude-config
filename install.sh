@@ -59,13 +59,12 @@ cmd_links_only() {
   echo ""
   echo "── workspace (~/Development/.claude) ────────────────────────────────"
 
-  make_symlink "$WORKSPACE_DIR/agents"             "$REPO_DIR/workspace/agents"
-  make_symlink "$WORKSPACE_DIR/commands"           "$REPO_DIR/workspace/commands"
-  make_symlink "$WORKSPACE_DIR/hooks/hooks.json"   "$REPO_DIR/workspace/hooks/hooks.json"
-  make_symlink "$WORKSPACE_DIR/mcp-configs"        "$REPO_DIR/workspace/mcp-configs"
-  make_symlink "$WORKSPACE_DIR/rules"              "$REPO_DIR/workspace/rules"
-  make_symlink "$WORKSPACE_DIR/skills"             "$REPO_DIR/workspace/skills"
+  make_symlink "$WORKSPACE_DIR/agents"              "$REPO_DIR/workspace/agents"
+  make_symlink "$WORKSPACE_DIR/commands"            "$REPO_DIR/workspace/commands"
+  make_symlink "$WORKSPACE_DIR/hooks/hooks.json"    "$REPO_DIR/workspace/hooks/hooks.json"
+  make_symlink "$WORKSPACE_DIR/mcp-configs"         "$REPO_DIR/workspace/mcp-configs"
   make_symlink "$WORKSPACE_DIR/settings.local.json" "$REPO_DIR/workspace/settings.local.json"
+  # NOTE: Do NOT symlink rules/ or skills/ — the workspace repo has its own tracked copies
 
   echo ""
   echo "── bmad (~/Development/_bmad) ────────────────────────────────────────"
@@ -146,6 +145,37 @@ cmd_clone_extras() {
   fi
 }
 
+cmd_clean_backups() {
+  echo ""
+  echo "── clean backups ─────────────────────────────────────────────────────"
+
+  local count=0
+  for item in "$GLOBAL_DIR"/*.backup.* "$GLOBAL_DIR"/*backup*/ \
+              "$WORKSPACE_DIR"/*.backup.* "$WORKSPACE_DIR"/*backup*/; do
+    if [ -e "$item" ]; then
+      rm -rf "$item"
+      ok "Removed: $item"
+      count=$((count + 1))
+    fi
+  done
+
+  # Also remove stale ~HEAD symlinks (from failed rules/skills symlink attempts)
+  for item in "$WORKSPACE_DIR"/*~HEAD; do
+    if [ -L "$item" ]; then
+      rm "$item"
+      ok "Removed stale symlink: $item"
+      count=$((count + 1))
+    fi
+  done
+
+  if [ "$count" -eq 0 ]; then
+    ok "No backups or stale symlinks found"
+  else
+    echo ""
+    echo "Cleaned $count item(s)."
+  fi
+}
+
 cmd_all() {
   cmd_clone_extras
   cmd_links_only
@@ -158,9 +188,10 @@ usage() {
   echo "Usage: $0 <command>"
   echo ""
   echo "Commands:"
-  echo "  all          Full first-time setup (clone extras + links + inject-mcp)"
-  echo "  links-only   Create symlinks only (safe to re-run)"
-  echo "  inject-mcp   Write mcpServers from secrets/ into ~/.claude.json"
+  echo "  all             Full first-time setup (clone extras + links + inject-mcp)"
+  echo "  links-only      Create symlinks only (safe to re-run)"
+  echo "  inject-mcp      Write mcpServers from secrets/ into ~/.claude.json"
+  echo "  clean-backups   Remove stale .backup.* files and ~HEAD symlinks"
   echo ""
   echo "New machine workflow:"
   echo "  1. git clone git@github.com:jee-eun-k/claude-config.git ~/Development/claude-config"
@@ -177,10 +208,11 @@ usage() {
 COMMAND="${1:-help}"
 
 case "$COMMAND" in
-  all)         cmd_all ;;
-  links-only)  cmd_links_only ;;
-  inject-mcp)  cmd_inject_mcp ;;
-  help|--help) usage ;;
+  all)            cmd_all ;;
+  links-only)     cmd_links_only ;;
+  inject-mcp)     cmd_inject_mcp ;;
+  clean-backups)  cmd_clean_backups ;;
+  help|--help)    usage ;;
   *)
     echo "Unknown command: $COMMAND"
     echo ""
