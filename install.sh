@@ -176,6 +176,61 @@ cmd_clean_backups() {
   fi
 }
 
+cmd_check_drift() {
+  echo ""
+  echo "── check drift (rules & skills) ──────────────────────────────────────"
+  echo ""
+  echo "Comparing shared rules between claude-config and workspace repo."
+  echo "Only rules/common/ is compared (both repos maintain this directory)."
+  echo ""
+
+  local has_drift=false
+
+  # Compare rules/common/ (shared between both repos)
+  if [ -d "$WORKSPACE_DIR/rules/common" ] && [ -d "$REPO_DIR/global/rules/common" ]; then
+    local diff_output
+    diff_output=$(diff -rq "$REPO_DIR/global/rules/common" "$WORKSPACE_DIR/rules/common" 2>/dev/null || true)
+    if [ -n "$diff_output" ]; then
+      warn "rules/common/ has drifted:"
+      echo "$diff_output" | sed 's/^/    /'
+      echo ""
+      has_drift=true
+    else
+      ok "rules/common/ — in sync"
+    fi
+  else
+    warn "One or both rules/common/ directories missing"
+  fi
+
+  # Compare language-specific rules that exist in both locations
+  for lang_dir in "$REPO_DIR"/global/rules/*/; do
+    local lang
+    lang="$(basename "$lang_dir")"
+    [ "$lang" = "common" ] && continue
+    if [ -d "$WORKSPACE_DIR/rules/$lang" ]; then
+      local diff_output
+      diff_output=$(diff -rq "$lang_dir" "$WORKSPACE_DIR/rules/$lang" 2>/dev/null || true)
+      if [ -n "$diff_output" ]; then
+        warn "rules/$lang/ has drifted:"
+        echo "$diff_output" | sed 's/^/    /'
+        echo ""
+        has_drift=true
+      else
+        ok "rules/$lang/ — in sync"
+      fi
+    fi
+  done
+
+  echo ""
+  if [ "$has_drift" = true ]; then
+    echo "Drift detected. Review the differences and merge as needed."
+    echo "  Source of truth: $REPO_DIR/global/rules/"
+    echo "  Workspace copy:  $WORKSPACE_DIR/rules/"
+  else
+    echo "No drift detected. All shared rules are in sync."
+  fi
+}
+
 cmd_all() {
   cmd_clone_extras
   cmd_links_only
@@ -192,6 +247,14 @@ usage() {
   echo "  links-only      Create symlinks only (safe to re-run)"
   echo "  inject-mcp      Write mcpServers from secrets/ into ~/.claude.json"
   echo "  clean-backups   Remove stale .backup.* files and ~HEAD symlinks"
+  echo "  check-drift     Compare rules between claude-config and workspace repo"
+  echo ""
+  echo "Architecture:"
+  echo "  claude-config/global/  → symlinked to ~/.claude/ (global user config)"
+  echo "  claude-config/workspace/ → partially symlinked to ~/Development/.claude/"
+  echo "  Workspace rules/ and skills/ are NOT symlinked — they are maintained"
+  echo "  independently in the everything-claude-code repo. Use 'check-drift'"
+  echo "  to detect divergence in shared rules."
   echo ""
   echo "New machine workflow:"
   echo "  1. git clone git@github.com:jee-eun-k/claude-config.git ~/Development/claude-config"
@@ -212,6 +275,7 @@ case "$COMMAND" in
   links-only)     cmd_links_only ;;
   inject-mcp)     cmd_inject_mcp ;;
   clean-backups)  cmd_clean_backups ;;
+  check-drift)    cmd_check_drift ;;
   help|--help)    usage ;;
   *)
     echo "Unknown command: $COMMAND"
