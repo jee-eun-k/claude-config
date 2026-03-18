@@ -51,7 +51,18 @@
       "Bash(head -3 /Users/alexa/Development/claude-config/workspace/agents/*.md 2>/dev/null | grep -A1 \"^==>\")",
       "Bash(ls -la /Users/alexa/Development/claude-config/workspace/commands/bmad/*/)",
       "Bash(git add:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(ls /Users/alexa/Development/.claude/*.backup.*)",
+      "Bash(ls -d /Users/alexa/Development/.claude/*.backup.*)",
+      "Bash(ls -d /Users/alexa/.claude/*.backup.*)",
+      "Bash(git -C /Users/alexa/Development/.claude/.. config --get remote.origin.url)",
+      "Bash(git -C /Users/alexa/Development/.claude status --short)",
+      "Bash(ls -d ~/Development/.claude/*.backup.*)",
+      "Bash(ls -d ~/.claude/*.backup.*)",
+      "Bash(bash install.sh clean-backups)",
+      "Bash(bash install.sh links-only)",
+      "Bash(ls -d ~/Development/_bmad.backup.*)",
+      "Bash(git commit:*)"
     ],
     "deny": []
   }
