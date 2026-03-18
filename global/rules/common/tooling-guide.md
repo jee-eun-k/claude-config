@@ -8,7 +8,7 @@ Tier 1 — NATIVE AGENTS  (fast, direct, everyday coding)
   Use for: 80% of daily work
 
 Tier 2 — BMAD WORKFLOWS  (structured, multi-agent, larger scope)
-  /bmad:bmm:workflows:*
+  ~/Development/_bmad/...  ← v6: no slash commands, reference paths directly
   Use for: new epics, architecture decisions, formal reviews
 
 Tier 3 — MCP TOOLS  (infrastructure, data, external systems)
@@ -17,6 +17,17 @@ Tier 3 — MCP TOOLS  (infrastructure, data, external systems)
 ```
 
 **Decision rule:** Start at Tier 1. Move to Tier 2 only when the task needs planning artifacts (PRD, epics, stories, arch docs) or team-simulation dialogue. Tier 3 is always available — agents call it automatically.
+
+> **BMAD v6 note:** No slash commands. Invoke by telling Claude: "Run the BMAD workflow at `~/Development/_bmad/<path>`"
+
+### ECC vs BMAD — Plan & Review
+
+| Tool | Scope | When |
+|------|-------|------|
+| ECC `/plan` | Code-level task breakdown | Task is well-defined |
+| BMAD planning workflows | PRD, arch, stories, acceptance criteria | Scope is unclear or multi-session |
+| ECC `/code-review` | Code quality, security, maintainability | After every change (quick) |
+| BMAD `bmad-code-review` | Did code meet story acceptance criteria? | Before closing a story/PR (deep) |
 
 ---
 
@@ -32,13 +43,21 @@ Tier 3 — MCP TOOLS  (infrastructure, data, external systems)
 4. git commit
 ```
 
-**Large feature (new domain, multiple services, unclear scope)**
+**Larger feature (unclear scope, multi-session)**
 ```
-1. /bmad:bmm:workflows:create-tech-spec   → Barry asks questions, produces implementation-ready spec
-2. /bmad:bmm:workflows:quick-dev          → Barry executes the spec with tests
+1. BMAD quick-flow     → ~/Development/_bmad/bmm/workflows/bmad-quick-flow
+2. /tdd → /code-review (per story)
+3. BMAD code-review    → ~/Development/_bmad/bmm/workflows/4-implementation/bmad-code-review
 ```
 
-**Tip:** Use `create-tech-spec` instead of writing a spec manually — Barry investigates existing code first.
+**New epic (full ceremony)**
+```
+1. BMAD create-prd          → bmm/workflows/2-plan-workflows/create-prd
+2. BMAD create-architecture → bmm/workflows/3-solutioning/bmad-create-architecture
+3. BMAD create-story        → bmm/workflows/4-implementation/bmad-create-story
+   → /plan → /tdd → /code-review   (per story)
+   → BMAD code-review              (before closing story)
+```
 
 ---
 
@@ -131,7 +150,7 @@ mcp__notebooklm-mcp__studio_create    → generate audio summary, slides, mind m
 |-------|---------|
 | Quick review after writing code | `/code-review` |
 | Security-focused review | Ask: "Run security-reviewer on [file/module]" |
-| Adversarial deep review (story-level) | `/bmad:bmm:workflows:code-review` |
+| Story-level acceptance validation | BMAD `~/Development/_bmad/bmm/workflows/4-implementation/bmad-code-review` |
 
 ---
 
@@ -275,19 +294,22 @@ mcp__serena__search_for_pattern        → regex search across codebase
 
 ```
 Morning:
-  /bmad:bmm:workflows:sprint-status     → "what's next?"
+  BMAD sprint-status  → ~/Development/_bmad/bmm/workflows/4-implementation/bmad-sprint-status
 
-Feature work:
+Feature work (well-defined):
   /plan → /tdd → /code-review → commit
+
+Feature work (unclear scope):
+  BMAD quick-flow → /tdd → /code-review → BMAD code-review → commit
 
 Before merging:
   /build-fix (if needed) → /refactor-clean → /e2e
 
 End of epic:
-  /bmad:bmm:workflows:retrospective     → lessons learned + next epic prep
+  BMAD retrospective  → ~/Development/_bmad/bmm/workflows/4-implementation/bmad-retrospective
 
 Whenever you learn something reusable:
-  /learn                                → extracts pattern to ~/.claude/skills/learned/
+  /learn              → extracts pattern to ~/.claude/skills/learned/
 ```
 
 ---
