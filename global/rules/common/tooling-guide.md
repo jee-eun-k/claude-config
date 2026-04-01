@@ -18,6 +18,8 @@ Tier 3 — MCP TOOLS  (infrastructure, data, external systems)
 
 **Decision rule:** Start at Tier 1. Move to Tier 2 only when the task needs planning artifacts (PRD, epics, stories, arch docs) or team-simulation dialogue. Tier 3 is always available — agents call it automatically.
 
+> **Auto-chaining:** When BMAD and ECC are used together, they auto-chain per [bmad-ecc-integration.md](./bmad-ecc-integration.md).
+
 > **BMAD v6 note:** No slash commands. Invoke by telling Claude: "Run the BMAD workflow at `~/Development/_bmad/<path>`"
 
 ### ECC vs BMAD — Plan & Review
