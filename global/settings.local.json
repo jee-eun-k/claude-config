@@ -45,7 +45,14 @@
       "Bash(cd ~/Development/ticktick-mcp && uv run pytest tests/ -v --cov=ticktick_mcp --cov-report=term-missing -q 2>&1)",
       "Bash(cd ~/Development/ticktick-mcp && TICKTICK_CLIENT_ID=test TICKTICK_CLIENT_SECRET=test uv run -m ticktick_mcp.cli auth 2>&1 | head -20)",
       "Bash(find /Users/alexa -name \".env\" -maxdepth 3 -not -path \"*/node_modules/*\" -not -path \"*/.git/*\" 2>/dev/null | head -20)",
-      "Bash(uv run:*)"
+      "Bash(uv run:*)",
+      "mcp__notebooklm-mcp__notebook_get",
+      "Bash(nlm auth:*)",
+      "mcp__notebooklm-mcp__notebook_list",
+      "mcp__notebooklm-mcp__notebook_query",
+      "Bash(wc -l /Users/alexa/Development/claude-config/global/rules/common/*.md)",
+      "Bash(git checkout:*)",
+      "Bash(ln:*)"
     ]
   },
   "outputStyle": "Learning"
