@@ -2,7 +2,7 @@
 
 When BMAD workflows complete, automatically chain the appropriate ECC agents.
 When ECC agents run, check for BMAD artifacts to enrich context.
-See [tooling-guide.md](./tooling-guide.md) for tool selection and invocation patterns.
+See the `tooling-guide` skill (loaded on demand) for tool selection and invocation patterns.
 
 ## Security-Sensitive Patterns
 

@@ -2,7 +2,32 @@
   "enabledPlugins": {
     "everything-claude-code@everything-claude-code": true
   },
-  "feedbackSurveyState": {
-    "lastShownTime": 1754010030538
+  "model": "opus",
+  "lazyLoadMcpTools": true,
+  "env": {
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "80"
+  },
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true,
+    "excludedCommands": ["docker"]
+  },
+  "attribution": {
+    "commit": "",
+    "pullRequest": ""
+  },
+  "mcpServers": {
+    "ticktick": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "/Users/alexa/Development/999.__personal__/ticktick-mcp",
+        "-m",
+        "ticktick_mcp.cli",
+        "run"
+      ]
+    }
   }
 }
