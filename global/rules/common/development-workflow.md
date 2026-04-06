@@ -36,3 +36,13 @@ The Feature Implementation Workflow describes the development pipeline: research
    - Detailed commit messages
    - Follow conventional commits format
    - See [git-workflow.md](./git-workflow.md) for commit message format and PR process
+
+## Error Recovery
+
+When an error occurs during implementation:
+1. **Stop** — do not auto-fix or retry blindly
+2. **Analyze** — summarize current state (`git status`, file state, error output)
+3. **Report** — explain where and why things went wrong
+4. **Propose** — suggest recovery steps and let the user decide
+
+Destructive recovery commands (`git reset`, `git restore`, `rm -rf`) are proposed only — the user executes them manually.
