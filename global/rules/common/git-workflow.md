@@ -10,7 +10,7 @@
 
 - **Lowercase only** — no `ERP-PAYJSON` or `Onboarding-Training-Bonus`
 - **Hyphens only** — no underscores, no camelCase (`payout-ledger`, not `payoutLedger`)
-- **Issue reference required** — `#123` for GitHub Issues (`feature/#123-settlement-ui`)
+- **Issue reference required** — plain number, no `#` (`feature/123-settlement-ui`)
 - **Short description** — 2-4 words, kebab-case
 
 ### Branch Types
@@ -28,9 +28,9 @@
 ### Examples
 
 ```
-feature/#329-error-pages        ✅
-feature/#651-deposit-filtering  ✅
-fix/#412-date-format-bug        ✅
+feature/329-error-pages         ✅
+feature/651-deposit-filtering   ✅
+fix/412-date-format-bug         ✅
 hotfix/monthly-summary          ✅ (hotfix exempt from issue ref)
 chore/e2e-smoke-tests           ✅
 
@@ -43,7 +43,8 @@ feature/298/virtual-account/tag  ❌ nested slashes
 ### Rules
 
 1. **No bare branch names** — always use a type prefix
-2. **One slash only** — `feature/#123-desc`, not `feature/123/module/desc`
+2. **One slash only** — `feature/123-desc`, not `feature/123/module/desc`
+5. **No special characters** — no `#`, `@`, `~` in branch names (shell escaping issues)
 3. **Hotfixes** are the only type exempt from issue reference requirement
 4. **Delete branches** after merge — do not accumulate stale remote branches
 
