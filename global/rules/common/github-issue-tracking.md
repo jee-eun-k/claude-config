@@ -7,7 +7,7 @@ Every code change MUST be linked to a GitHub Issue — no exceptions except hotf
 ### Before Writing Code
 
 1. **Find or create a GitHub Issue** for the work
-2. **Reference the issue number** in branch name: `feature/#123-desc`, `fix/#123-desc`
+2. **Reference the issue number** in branch name (see [git-workflow.md](./git-workflow.md#branch-naming) for full naming rules)
 3. **Reference the issue** in commit messages and PR description
 
 ### Exempt from Issue Requirement
