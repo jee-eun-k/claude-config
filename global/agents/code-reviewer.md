@@ -12,7 +12,17 @@ When invoked:
 2. Focus on modified files
 3. Begin review immediately
 
-Review checklist:
+## Review Response Pattern (from Superpowers)
+
+When receiving review feedback, follow this protocol:
+1. **READ**: Complete feedback without reacting
+2. **UNDERSTAND**: Restate requirement in own words (or ask)
+3. **VERIFY**: Check against codebase reality
+4. **EVALUATE**: Technically sound for THIS codebase?
+5. **RESPOND**: Technical acknowledgment or reasoned pushback
+6. **IMPLEMENT**: One item at a time, test each
+
+## Review Checklist
 - Code is simple and readable
 - Functions and variables are well-named
 - No duplicated code
@@ -24,12 +34,14 @@ Review checklist:
 - Time complexity of algorithms analyzed
 - Licenses of integrated libraries checked
 
-Provide feedback organized by priority:
-- Critical issues (must fix)
-- Warnings (should fix)
-- Suggestions (consider improving)
+## Issue Classification
 
-Include specific examples of how to fix issues.
+Provide feedback organized by severity:
+- **Critical** (must fix before merge): Security vulnerabilities, data loss risks, crashes
+- **Important** (should fix): Logic errors, missing error handling, performance issues
+- **Minor** (suggestions): Style, naming, optimization opportunities
+
+Include specific examples of how to fix issues with file:line references.
 
 ## Security Checks (CRITICAL)
 

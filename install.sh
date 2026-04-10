@@ -55,6 +55,8 @@ cmd_links_only() {
   make_symlink "$GLOBAL_DIR/commands"              "$REPO_DIR/global/commands"
   make_symlink "$GLOBAL_DIR/hooks/hooks.json"      "$REPO_DIR/global/hooks/hooks.json"
   make_symlink "$GLOBAL_DIR/bin/codeagent-wrapper" "$REPO_DIR/global/bin/codeagent-wrapper"
+  make_symlink "$GLOBAL_DIR/skills/superpowers"    "$REPO_DIR/global/skills/superpowers"
+  make_symlink "$GLOBAL_DIR/skills/omc"            "$REPO_DIR/global/skills/omc"
 
   echo ""
   echo "── workspace (~/Development/.claude) ────────────────────────────────"
@@ -231,10 +233,30 @@ cmd_check_drift() {
   fi
 }
 
+cmd_plugins() {
+  echo ""
+  echo "── plugins (OMC + Superpowers) ───────────────────────────────────────"
+
+  if ! command -v claude &> /dev/null; then
+    warn "claude CLI not found — install Claude Code first, then re-run plugins"
+    return 1
+  fi
+
+  log "Installing oh-my-claudecode plugin..."
+  claude plugin install oh-my-claudecode && ok "oh-my-claudecode installed" || warn "oh-my-claudecode install failed"
+
+  log "Installing superpowers plugin..."
+  claude plugin install superpowers@claude-plugins-official && ok "superpowers installed" || warn "superpowers install failed"
+
+  echo ""
+  echo "Plugins installed. Restart Claude Code to activate."
+}
+
 cmd_all() {
   cmd_clone_extras
   cmd_links_only
   cmd_inject_mcp
+  cmd_plugins
 }
 
 # ─── usage ────────────────────────────────────────────────────────────────────
@@ -243,9 +265,10 @@ usage() {
   echo "Usage: $0 <command>"
   echo ""
   echo "Commands:"
-  echo "  all             Full first-time setup (clone extras + links + inject-mcp)"
+  echo "  all             Full first-time setup (clone extras + links + inject-mcp + plugins)"
   echo "  links-only      Create symlinks only (safe to re-run)"
   echo "  inject-mcp      Write mcpServers from secrets/ into ~/.claude.json"
+  echo "  plugins         Install/update OMC and Superpowers Claude Code plugins"
   echo "  clean-backups   Remove stale .backup.* files and ~HEAD symlinks"
   echo "  check-drift     Compare rules between claude-config and workspace repo"
   echo ""
@@ -274,6 +297,7 @@ case "$COMMAND" in
   all)            cmd_all ;;
   links-only)     cmd_links_only ;;
   inject-mcp)     cmd_inject_mcp ;;
+  plugins)        cmd_plugins ;;
   clean-backups)  cmd_clean_backups ;;
   check-drift)    cmd_check_drift ;;
   help|--help)    usage ;;
