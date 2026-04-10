@@ -2,6 +2,8 @@
 
 ## Available Agents
 
+### Custom Agents (Layer 4 — highest priority)
+
 Located in `~/.claude/agents/`:
 
 | Agent | Purpose | When to Use |
@@ -16,6 +18,28 @@ Located in `~/.claude/agents/`:
 | refactor-cleaner | Dead code cleanup | Code maintenance |
 | doc-updater | Documentation | Updating docs |
 | rust-reviewer | Rust code review | Rust projects |
+
+### OMC Plugin Agents (Layer 2 — unique, no overlap with custom)
+
+From oh-my-claudecode plugin:
+
+| Agent | Purpose | When to Use |
+|-------|---------|-------------|
+| analyst | Requirements clarity, acceptance criteria | Vague requirements |
+| critic | Plan/design critical challenge | Validate plans before execution |
+| debugger | Root-cause analysis, failure diagnosis | Complex debugging |
+| designer | UX/UI architecture, interaction design | UI/UX work |
+| executor | Code implementation, refactoring | Task execution in pipelines |
+| explore | Fast codebase search, file/symbol mapping | Quick codebase exploration |
+| git-master | Commit strategy, history hygiene | Git workflow decisions |
+| qa-tester | Interactive CLI/service validation | Runtime testing |
+| scientist | Research and experimentation | R&D tasks |
+| tracer | Evidence-driven causal analysis | Tracing bugs through systems |
+| verifier | Completion evidence, claim validation | Before marking tasks done |
+| writer | Docs, migration notes, user guidance | Documentation authoring |
+| code-simplifier | Code cleanup and simplification | After complex implementations |
+| document-specialist | SDK/framework documentation | Library/API docs |
+| test-engineer | Test strategy, coverage, flaky tests | Test infrastructure |
 
 ## Immediate Agent Usage
 
@@ -39,6 +63,15 @@ Launch 3 agents in parallel:
 # BAD: Sequential when unnecessary
 First agent 1, then agent 2, then agent 3
 ```
+
+## Execution Modes (from OMC)
+
+| Command | Mode | Pipeline | Best For |
+|---------|------|----------|----------|
+| `/team` | Multi-agent coordination | plan -> prd -> exec -> verify -> fix | Coordinated parallel work |
+| `/ultrawork` | Maximum throughput | Direct parallel dispatch | Independent tasks, fastest |
+| `/autopilot` | Autonomous end-to-end | expand -> plan -> exec -> qa -> validate | Well-defined features |
+| `/brainstorm` | Design exploration | Socratic Q&A -> design doc -> plan | Unclear requirements |
 
 ## Multi-Perspective Analysis
 
