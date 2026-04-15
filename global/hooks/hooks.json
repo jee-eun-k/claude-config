@@ -24,6 +24,18 @@
         ],
         "description": "Block creation of random .md files - keeps docs consolidated"
       }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "#!/bin/bash\n# Audit logging for security-relevant tool invocations (Write/Edit/Bash)\ninput=$(cat)\ntool_name=$(echo \"$input\" | jq -r '.tool_name // .tool // \"unknown\"')\naudit_enabled=\"${CLAUDE_AUDIT_ENABLED:-true}\"\nif [ \"$audit_enabled\" = \"false\" ]; then echo \"$input\"; exit 0; fi\ncase \"$tool_name\" in\n  Write|Edit|Bash)\n    ts=$(date -u +\"%Y-%m-%dT%H:%M:%SZ\")\n    fp=$(echo \"$input\" | jq -r '.tool_input.file_path // empty' 2>/dev/null)\n    cmd=$(echo \"$input\" | jq -r '.tool_input.command // empty' 2>/dev/null | head -c 200)\n    target=\"${fp:-$cmd}\"\n    printf '{\"ts\":\"%s\",\"tool\":\"%s\",\"target\":\"%s\"}\\n' \"$ts\" \"$tool_name\" \"$target\" >> \"${TMPDIR}/claude-audit-$(date +%Y%m%d).jsonl\"\n    ;;\nesac\necho \"$input\""
+          }
+        ],
+        "description": "Audit log security-relevant tool invocations (Write/Edit/Bash) to $TMPDIR/claude-audit-*.jsonl"
+      }
     ]
   }
 }

@@ -37,6 +37,20 @@ Use `/ultrawork` when:
 - Verify no conflicts after workers complete
 - Run full test suite after integration
 
+## Worktree Isolation (Required)
+
+Each worker MUST be launched with `isolation: "worktree"` for true file-level isolation:
+
+**Pre-dispatch checklist:**
+- [ ] Confirm no two workers will edit the same file
+- [ ] Base branch is clean and tests pass
+- [ ] Each worker has a clear, narrow scope
+
+**Post-dispatch checklist:**
+- [ ] Merge each worktree branch to base sequentially
+- [ ] Run full test suite after each merge
+- [ ] Resolve any unexpected conflicts before continuing
+
 ## Integration
 
 - Use `/plan` first to identify which tasks are truly independent

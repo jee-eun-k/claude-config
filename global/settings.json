@@ -1,16 +1,18 @@
 {
-  "model": "opus",
   "env": {
-    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "80"
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "80",
+    "CLAUDE_AUDIT_ENABLED": "true",
+    "CLAUDE_TRACE_ENABLED": "true"
   },
   "attribution": {
     "commit": ""
   },
+  "model": "opus",
   "enabledPlugins": {
     "everything-claude-code@everything-claude-code": true,
-    "oh-my-claudecode@oh-my-claudecode": true,
+    "oh-my-claudecode@oh-my-claudecode": false,
     "superpowers@claude-plugins-official": true,
-    "warp@claude-code-warp": true
+    "warp@claude-code-warp": false
   },
   "extraKnownMarketplaces": {
     "claude-code-warp": {

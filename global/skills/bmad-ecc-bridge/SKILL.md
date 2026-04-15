@@ -1,3 +1,8 @@
+---
+name: bmad-ecc-bridge
+description: "Use when BMAD workflows complete to chain ECC agents, or when ECC agents run to enrich context with BMAD artifacts. Only relevant in BMAD-managed projects."
+---
+
 # BMAD-ECC Auto-Integration
 
 When BMAD workflows complete, automatically chain the appropriate ECC agents.

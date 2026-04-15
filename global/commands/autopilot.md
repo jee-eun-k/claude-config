@@ -56,6 +56,12 @@ deep-interview -> ralplan -> autopilot
 - If input is too vague, autopilot may redirect to deep-interview
 - Always review the output before pushing to remote
 
+## Context Reset Between Phases
+
+Autopilot spans multiple workflow phases (Expand → Plan → Execute → QA → Validate → Cleanup). Between each phase transition, compact context to preserve decisions while discarding exploration artifacts. See [context-handoffs.md](../rules/common/context-handoffs.md) for the phase transition protocol.
+
+For parallel execution in Phase 2, use `isolation: "worktree"` per agent to prevent file conflicts.
+
 ## Integration
 
 - Use `/brainstorm` first if requirements are unclear
