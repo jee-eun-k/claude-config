@@ -43,6 +43,20 @@ plan -> prd -> exec -> verify -> fix (loop)
 - Verification runs after all agents complete
 - Fix loop ensures quality before declaring done
 
+## Worktree Isolation (Required)
+
+Each agent MUST be launched with `isolation: "worktree"` to prevent file conflicts:
+
+**Pre-dispatch checklist:**
+- [ ] Verify tasks are truly independent (no shared file mutations)
+- [ ] Each agent's scope touches distinct files/modules
+- [ ] Base branch is clean (`git status` shows no uncommitted changes)
+
+**Post-dispatch checklist:**
+- [ ] All agent worktree branches merge cleanly to base
+- [ ] Full test suite passes after integration
+- [ ] No duplicate or conflicting changes across agents
+
 ## Integration
 
 - Use `/brainstorm` first if requirements are vague

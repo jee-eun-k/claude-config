@@ -1,3 +1,8 @@
+---
+name: performance-guide
+description: "Use when choosing model tiers (Haiku/Sonnet/Opus), managing context window, configuring extended thinking, or troubleshooting build failures."
+---
+
 # Performance Optimization
 
 ## Model Selection Strategy

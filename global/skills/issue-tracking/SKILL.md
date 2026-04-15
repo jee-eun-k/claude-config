@@ -1,3 +1,8 @@
+---
+name: issue-tracking
+description: "Use when creating GitHub issues, linking branches to issues, or setting up issue-driven workflow. Covers bilingual title format, sprint labels, and BMAD integration."
+---
+
 # GitHub Issue Tracking
 
 ## Mandatory Issue Tracking

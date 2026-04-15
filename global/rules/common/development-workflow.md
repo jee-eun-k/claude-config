@@ -2,7 +2,7 @@
 
 > This file extends [common/git-workflow.md](./git-workflow.md) with the full feature development process that happens before git operations.
 
-The Feature Implementation Workflow describes the development pipeline: research, planning, TDD, code review, and then committing to git.
+The Feature Implementation Workflow describes the development pipeline: research, planning, TDD, code review, and then committing to git. For context management between phases, see [context-handoffs.md](./context-handoffs.md).
 
 ## Feature Implementation Workflow
 

@@ -55,14 +55,17 @@ cmd_links_only() {
   make_symlink "$GLOBAL_DIR/commands"              "$REPO_DIR/global/commands"
   make_symlink "$GLOBAL_DIR/hooks/hooks.json"      "$REPO_DIR/global/hooks/hooks.json"
   make_symlink "$GLOBAL_DIR/bin/codeagent-wrapper" "$REPO_DIR/global/bin/codeagent-wrapper"
+  make_symlink "$GLOBAL_DIR/bin/mcp-budget-check.sh" "$REPO_DIR/global/bin/mcp-budget-check.sh"
+  make_symlink "$GLOBAL_DIR/bin/tool-observer.sh"    "$REPO_DIR/global/bin/tool-observer.sh"
   make_symlink "$GLOBAL_DIR/skills/superpowers"    "$REPO_DIR/global/skills/superpowers"
   make_symlink "$GLOBAL_DIR/skills/omc"            "$REPO_DIR/global/skills/omc"
 
   echo ""
   echo "── workspace (~/Development/.claude) ────────────────────────────────"
 
-  make_symlink "$WORKSPACE_DIR/agents"              "$REPO_DIR/workspace/agents"
-  make_symlink "$WORKSPACE_DIR/commands"            "$REPO_DIR/workspace/commands"
+  # NOTE: agents/ and commands/ are NOT symlinked at workspace level.
+  # Global symlinks (~/.claude/agents, ~/.claude/commands) are the single source of truth.
+  # Workspace copies were removed in Epic 3, Story 3-1 to prevent drift.
   make_symlink "$WORKSPACE_DIR/hooks/hooks.json"    "$REPO_DIR/workspace/hooks/hooks.json"
   make_symlink "$WORKSPACE_DIR/mcp-configs"         "$REPO_DIR/workspace/mcp-configs"
   make_symlink "$WORKSPACE_DIR/settings.local.json" "$REPO_DIR/workspace/settings.local.json"
@@ -222,6 +225,25 @@ cmd_check_drift() {
       fi
     fi
   done
+
+  # Check for stale workspace agent/command copies (should not exist)
+  if [ -d "$REPO_DIR/workspace/agents" ] && [ -n "$(ls -A "$REPO_DIR/workspace/agents" 2>/dev/null)" ]; then
+    warn "workspace/agents/ contains files — these are stale duplicates of global/agents/"
+    ls "$REPO_DIR/workspace/agents" | sed 's/^/    /'
+    echo ""
+    has_drift=true
+  else
+    ok "workspace/agents/ — clean (no stale duplicates)"
+  fi
+
+  if [ -d "$REPO_DIR/workspace/commands" ] && [ -n "$(ls -A "$REPO_DIR/workspace/commands" 2>/dev/null)" ]; then
+    warn "workspace/commands/ contains files — these are stale duplicates of global/commands/"
+    ls "$REPO_DIR/workspace/commands" | sed 's/^/    /'
+    echo ""
+    has_drift=true
+  else
+    ok "workspace/commands/ — clean (no stale duplicates)"
+  fi
 
   echo ""
   if [ "$has_drift" = true ]; then

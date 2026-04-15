@@ -1,3 +1,8 @@
+---
+name: design-patterns
+description: "Use when implementing new functionality and need skeleton project patterns, repository pattern, solution comparison, or API response format guidance."
+---
+
 # Common Patterns
 
 ## Skeleton Projects
