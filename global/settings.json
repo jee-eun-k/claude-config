@@ -1,21 +1,30 @@
 {
-  "enabledPlugins": {
-    "everything-claude-code@everything-claude-code": true
-  },
-  "model": "opus",
-  "lazyLoadMcpTools": true,
   "env": {
     "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "80"
+  },
+  "attribution": {
+    "commit": ""
+  },
+  "enabledPlugins": {
+    "everything-claude-code@everything-claude-code": true,
+    "warp@claude-code-warp": true
+  },
+  "extraKnownMarketplaces": {
+    "claude-code-warp": {
+      "source": {
+        "source": "github",
+        "repo": "warpdotdev/claude-code-warp"
+      }
+    }
   },
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
-    "excludedCommands": ["docker"]
+    "excludedCommands": [
+      "docker"
+    ]
   },
-  "attribution": {
-    "commit": "",
-    "pullRequest": ""
-  },
+  "lazyLoadMcpTools": true,
   "mcpServers": {
     "ticktick": {
       "type": "stdio",

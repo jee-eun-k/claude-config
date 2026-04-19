@@ -90,7 +90,8 @@
       "Bash(grep -A5 -i ticktick echo --- cat /Users/alexa/Development/999.__personal__/ticktick-mcp/README.md)",
       "Bash(az boards:*)",
       "Bash(python3 -c \":*)",
-      "Skill(update-config)"
+      "Skill(update-config)",
+      "WebFetch(domain:api.github.com)"
     ],
     "deny": []
   }
