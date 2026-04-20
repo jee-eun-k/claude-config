@@ -57,8 +57,15 @@
       "mcp__ticktick__create_project",
       "mcp__ticktick__batch_create_tasks",
       "mcp__ticktick__batch_delete_tasks",
-      "mcp__infra-gateway__get_pull_request"
+      "mcp__infra-gateway__get_pull_request",
+      "WebFetch(domain:plant-grass-8e6.notion.site)",
+      "Bash(mkdir -p ~/.warp/themes)",
+      "Bash(git clone:*)"
     ],
     "deny": []
+  },
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true
   }
 }
