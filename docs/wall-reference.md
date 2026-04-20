@@ -16,6 +16,7 @@
 | Well-scoped story    | `/autopilot` (all constraints in story AC)   |
 | New epic             | BMAD `create-prd` → `create-arch` → stories |
 | Security concern     | "Run security-reviewer on [module]"          |
+| Debug tool usage     | `/trace` (view audit/trace logs)             |
 | Before merging       | `/build-fix` → `/refactor-clean` → `/e2e`   |
 
 ## WORKFLOW (7 steps)
@@ -60,13 +61,13 @@ Research → Brainstorm → Plan → TDD → Dev (parallel) → Review → Verif
 
 ## HARD RULES
 
-Iron Law (no code without failing test) · 3-Fix Limit (3 fails = escalate) · Evidence Gate (no "should work") · Prod build before merge · Research first (GitHub → Context7 → Exa) · Immutability · Korean bilingual issues · No hardcoded secrets
+Iron Law (no code without failing test) · 3-Fix Limit (3 fails = escalate) · Evidence Gate (no "should work") · Prod build before merge · Research first (GitHub → Context7 → Exa) · Immutability · Korean bilingual issues · No hardcoded secrets · Secret detection hook (auto-blocks)
 
 ---
 
 # PAGE 2 — REFERENCE & LOOKUP
 
-## COMMANDS (15)
+## COMMANDS (16)
 
 | Command | What | When |
 |---------|------|------|
@@ -83,6 +84,7 @@ Iron Law (no code without failing test) · 3-Fix Limit (3 fails = escalate) · E
 | `/test-coverage` | Coverage report | Before PR |
 | `/update-docs` `/update-codemaps` | Sync docs, regen maps | After changes |
 | `/learn` | Extract patterns | End of session |
+| `/trace` | View tool execution traces | Debugging, audit |
 | `/sync-sprint` | BMAD → TickTick + Obsidian | Daily standup |
 
 ## AGENTS
@@ -93,9 +95,11 @@ Iron Law (no code without failing test) · 3-Fix Limit (3 fails = escalate) · E
 
 ## SKILLS (cherry-picked, Layer 3)
 
-**Superpowers:** `brainstorming` · `subagent-driven-development` · `dispatching-parallel-agents` · `using-git-worktrees` · `verification-before-completion` · `receiving-code-review` · `writing-skills`
+**Superpowers (7):** `brainstorming` · `subagent-driven-development` · `dispatching-parallel-agents` · `using-git-worktrees` · `verification-before-completion` · `receiving-code-review` · `writing-skills`
 
-**OMC:** `deep-interview` (ambiguity scoring ≤20%) · `ralplan` (Planner/Architect/Critic) · `ultraqa` (5-iteration QA) · `visual-verdict` (screenshot diff)
+**OMC (4):** `deep-interview` (ambiguity scoring ≤20%) · `ralplan` (Planner/Architect/Critic) · `ultraqa` (5-iteration QA) · `visual-verdict` (screenshot diff)
+
+**General (5):** `tooling-guide` · `bmad-ecc-bridge` · `design-patterns` · `issue-tracking` · `performance-guide`
 
 ## BMAD WORKFLOWS — `~/Development/_bmad/bmm/workflows/`
 
@@ -117,7 +121,25 @@ Invoke: `"Run the BMAD workflow at ~/Development/_bmad/bmm/workflows/<path>"`
 | Context7 | `get-library-docs` | Live API docs |
 | Serena | `find_symbol` | Code navigation |
 | NotebookLM | `notebook_query` (MCP) | Knowledge base |
-| infra-gateway | `search_code` `execute_sql` (MCP) | GitHub, DB |
+| infra-gateway | `search_code` (MCP) | GitHub search |
+
+## HOOKS (3 types)
+
+| Hook | Type | Purpose |
+|------|------|---------|
+| Secret detection | UserPromptSubmit | Block API keys/tokens/private keys in prompts |
+| MD file blocker | PreToolUse | Prevent unnecessary .md file creation |
+| Audit logger | PostToolUse | Log Write/Edit/Bash to `$TMPDIR/claude-audit-*.jsonl` |
+
+Kill switches: `CLAUDE_AUDIT_ENABLED=false` · `CLAUDE_TRACE_ENABLED=false`
+
+## BIN UTILITIES
+
+| Script | Purpose |
+|--------|---------|
+| `codeagent-wrapper` | Multi-agent execution wrapper |
+| `mcp-budget-check.sh` | Audit MCP server counts per tier |
+| `tool-observer.sh` | JSONL trace capture for `/trace` |
 
 ## CROSS-REPO MAP
 
@@ -126,8 +148,8 @@ Invoke: `"Run the BMAD workflow at ~/Development/_bmad/bmm/workflows/<path>"`
 ## PLUGIN STACK
 
 ```
-Layer 4 (WIN): User Custom — 9 agents, 15 commands, 12 rules
-Layer 3:       Cherry-Picked — 7 SP skills, 4 OMC skills
+Layer 4 (WIN): User Custom — 9 agents, 16 commands, 17 rules, 3 hooks
+Layer 3:       Cherry-Picked — 7 SP skills, 4 OMC skills, 5 general skills
 Layer 2:       Plugins — ECC + OMC (15 agents) + Superpowers
 Layer 1:       Claude Defaults
 ```
@@ -135,4 +157,4 @@ Layer 1:       Claude Defaults
 **Keys:** `Option+T` thinking · `Ctrl+O` verbose · `Esc` cancel · `/fast` toggle fast mode
 
 ---
-*v2026-04-10 · 2-page A4 landscape · `~/Development/claude-config/docs/wall-reference.md`*
+*v2026-04-16 · 2-page A4 landscape · `~/Development/claude-config/docs/wall-reference.md`*
