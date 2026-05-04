@@ -1,13 +1,29 @@
 {
   "env": {
-    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "80"
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "80",
+    "CLAUDE_AUDIT_ENABLED": "true",
+    "CLAUDE_TRACE_ENABLED": "true"
   },
   "attribution": {
     "commit": ""
   },
+  "permissions": {
+    "allow": [
+      "Bash(gh *)",
+      "WebSearch",
+      "WebFetch",
+      "mcp__infra-gateway__search",
+      "mcp__infra-gateway__search_code",
+      "mcp__infra-gateway__search_repositories",
+      "mcp__infra-gateway__fetch_content"
+    ],
+    "defaultMode": "plan"
+  },
   "enabledPlugins": {
     "everything-claude-code@everything-claude-code": true,
-    "warp@claude-code-warp": true
+    "oh-my-claudecode@oh-my-claudecode": false,
+    "superpowers@claude-plugins-official": true,
+    "warp@claude-code-warp": false
   },
   "extraKnownMarketplaces": {
     "claude-code-warp": {
@@ -20,6 +36,7 @@
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
+    "enableWeakerNetworkIsolation": true,
     "excludedCommands": [
       "docker"
     ]
@@ -38,5 +55,6 @@
         "run"
       ]
     }
-  }
+  },
+  "theme": "light-daltonized"
 }

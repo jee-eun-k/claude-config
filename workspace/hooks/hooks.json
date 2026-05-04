@@ -31,16 +31,6 @@
           }
         ],
         "description": "Pause before git push to review changes"
-      },
-      {
-        "matcher": "tool == \"Write\" && tool_input.file_path matches \"\\\\.(md|txt)$\" && !(tool_input.file_path matches \"README\\\\.md|CLAUDE\\\\.md|AGENTS\\\\.md|CONTRIBUTING\\\\.md\")",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "#!/bin/bash\n# Block creation of unnecessary documentation files\ninput=$(cat)\nfile_path=$(echo \"$input\" | jq -r '.tool_input.file_path // \"\"')\n\nif [[ \"$file_path\" =~ \\.(md|txt)$ ]] && [[ ! \"$file_path\" =~ (README|CLAUDE|AGENTS|CONTRIBUTING)\\.md$ ]]; then\n  echo \"[Hook] BLOCKED: Unnecessary documentation file creation\" >&2\n  echo \"[Hook] File: $file_path\" >&2\n  echo \"[Hook] Use README.md for documentation instead\" >&2\n  exit 1\nfi\n\necho \"$input\""
-          }
-        ],
-        "description": "Block creation of random .md files - keeps docs consolidated"
       }
     ],
     "PostToolUse": [
@@ -83,6 +73,16 @@
           }
         ],
         "description": "Warn about console.log statements after edits"
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "#!/bin/bash\n# Execution trace capture - all tool invocations\ninput=$(cat)\ntrace_enabled=\"${CLAUDE_TRACE_ENABLED:-true}\"\nif [ \"$trace_enabled\" = \"false\" ]; then echo \"$input\"; exit 0; fi\ntool_name=$(echo \"$input\" | jq -r '.tool_name // .tool // \"unknown\"')\nts=$(date -u +\"%Y-%m-%dT%H:%M:%SZ\")\nfp=$(echo \"$input\" | jq -r '.tool_input.file_path // empty' 2>/dev/null)\ncmd=$(echo \"$input\" | jq -r '.tool_input.command // empty' 2>/dev/null | head -c 200)\ntarget=\"${fp:-$cmd}\"\nprintf '{\"ts\":\"%s\",\"tool\":\"%s\",\"target\":\"%s\"}\\n' \"$ts\" \"$tool_name\" \"$target\" >> \"${TMPDIR}/claude-trace-$(date +%Y%m%d).jsonl\"\necho \"$input\""
+          }
+        ],
+        "description": "Capture execution trace of all tool invocations to $TMPDIR/claude-trace-*.jsonl"
       }
     ],
     "Stop": [
