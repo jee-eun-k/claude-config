@@ -8,9 +8,17 @@
     "commit": ""
   },
   "permissions": {
+    "allow": [
+      "Bash(gh *)",
+      "WebSearch",
+      "WebFetch",
+      "mcp__infra-gateway__search",
+      "mcp__infra-gateway__search_code",
+      "mcp__infra-gateway__search_repositories",
+      "mcp__infra-gateway__fetch_content"
+    ],
     "defaultMode": "plan"
   },
-  "model": "opus",
   "enabledPlugins": {
     "everything-claude-code@everything-claude-code": true,
     "oh-my-claudecode@oh-my-claudecode": false,
@@ -28,6 +36,7 @@
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
+    "enableWeakerNetworkIsolation": true,
     "excludedCommands": [
       "docker"
     ]
@@ -46,5 +55,6 @@
         "run"
       ]
     }
-  }
+  },
+  "theme": "light-daltonized"
 }
