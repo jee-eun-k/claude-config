@@ -30,6 +30,7 @@ The Feature Implementation Workflow describes the development pipeline: research
    - Break down into granular 2-5 minute tasks with exact file paths
    - For complex/vague tasks, use `deep-interview` (OMC) for mathematical ambiguity scoring
    - For consensus planning, use `ralplan` (OMC) for Planner/Architect/Critic validation
+   - **Spike story for migrations/refactors**: Before locking story boundaries, wire the new thing into existing code on a throwaway branch (half-day timebox). External docs won't reveal runtime constraints, provider ordering bugs, adapter pattern opportunities, god component coupling, or test mock blast radius — only touching the actual codebase surfaces these integration boundary issues.
 
 3. **TDD Approach**
    - Use **tdd-guide** agent
