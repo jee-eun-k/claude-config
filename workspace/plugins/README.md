@@ -38,6 +38,14 @@ claude plugin marketplace add https://github.com/mixedbread-ai/mgrep
 claude plugin install typescript-lsp@claude-plugins-official
 ```
 
+### Core Plugins (installed by `./install.sh plugins`)
+
+| Plugin | Source | What You Get |
+|--------|--------|-------------|
+| `everything-claude-code` | `everything-claude-code` | Base agents, workflows, hooks |
+| `oh-my-claudecode` | `oh-my-claudecode` | 15 unique agents, 4 execution modes, 20 hooks, model routing |
+| `superpowers` | `claude-plugins-official` | 7-phase structured workflow, bootstrap injection |
+
 ### Recommended Plugins
 
 **Development:**

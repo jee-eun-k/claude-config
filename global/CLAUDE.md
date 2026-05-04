@@ -1,4 +1,5 @@
-- Always discuss with gemini when facing some complex issue. you can access to it by cli command 'gemini'
-- When planning, always get OpenCode's Sisyphus' version of the plan as well (via `opencode` CLI) and integrate it with Claude's plan. Then consult with Gemini (via `gemini` CLI) with the combined output.
+- Discuss with Gemini (`gemini` CLI) when facing complex architectural decisions or unresolved issues.
+- For **epic-level planning only** (new epics, major refactors, cross-repo changes): also consult OpenCode (`opencode run "prompt"`) and integrate perspectives.
   - **Usage**: `opencode run "your prompt here"` (non-interactive mode, works inside Claude Code sessions)
   - Do NOT call `opencode` without the `run` subcommand — it launches an interactive TUI that will hang.
+- For routine story-level planning, Gemini/OpenCode consultation is optional — use your judgment.
