@@ -1,15 +1,14 @@
 ---
-description: Sync BMAD sprint status to TickTick tasks and Obsidian dashboard
+description: Sync BMAD sprint status to Obsidian dashboard
 ---
 
 # Sync Sprint Command
 
-Reads `sprint-status.yaml`, pushes stories to TickTick as tasks, and generates an Obsidian sprint dashboard.
+Reads `sprint-status.yaml` and generates an Obsidian sprint dashboard.
 
 ## Data Sources
 
-- **Sprint status**: `~/Development/_bmad-output/implementation-artifacts/sprint-status.yaml`
-- **Sync map**: `~/Development/_bmad-output/implementation-artifacts/.ticktick-sync-map.yaml`
+- **Sprint status**: `~/Development/_bmad-output/brs-client/sprint-status.yaml`
 - **Obsidian dashboard**: `~/Library/Mobile Documents/com~apple~CloudDocs/000_obsidian/000_work/dev-notes/sprint-dashboard.md`
 
 ## Execution Steps
@@ -34,74 +33,7 @@ Also extract epic metadata:
 - `epic_status`: the value
 - `epic_title`: from the YAML comment above it (e.g., `# Epic 5: Remove Build Bypasses (Phase 5)`)
 
-### Step 2: Load Sync Map
-
-Read `.ticktick-sync-map.yaml` if it exists. If not, treat as empty (first sync).
-
-Structure:
-```yaml
-project_id: <TickTick project ID>
-project_name: "BMAD Sprint"
-last_synced: <ISO timestamp>
-synced_from: <sprint-status.yaml last_updated value>
-stories:
-  <story_id>:
-    ticktick_id: <task_id>
-    last_status: <status at last sync>
-```
-
-### Step 3: Ensure TickTick Project Exists
-
-If `project_id` is NOT in sync map:
-1. Call `get_projects` to check if "BMAD Sprint" project already exists
-2. If not found, call `create_project` with name="BMAD Sprint", color="#4A90D9", view_mode="kanban"
-3. Record `project_id` in sync map
-
-### Step 4: Compute Diff
-
-Compare current sprint stories against sync map:
-- **New stories**: story_id exists in sprint but NOT in sync map
-- **Status changed**: story_id exists in both but status differs from `last_status`
-- **Unchanged**: same status — skip
-
-### Step 5: Push to TickTick
-
-**Status → Priority mapping:**
-
-| BMAD Status | TickTick Priority | Notes |
-|-------------|------------------|-------|
-| backlog | 0 (None) | |
-| ready-for-dev | 1 (Low) | |
-| in-progress | 5 (High) | |
-| review | 3 (Medium) | |
-| done | 0 (None) | Will be completed |
-
-**For new stories:**
-Use `batch_create_tasks` (or individual `create_task` if batch isn't available via MCP). For each:
-- `title`: humanized display title
-- `project_id`: BMAD Sprint project ID
-- `content`: metadata block:
-  ```
-  bmad_story_id: <story_id>
-  bmad_epic: <epic_id>
-  bmad_status: <status>
-  ```
-- `priority`: mapped from status table above
-
-**For status-changed stories:**
-- If new status is `done`: call `complete_task` with project_id and ticktick_id
-- Otherwise: call `update_task` with updated priority and content (updated bmad_status)
-
-Record all task IDs returned from creation.
-
-### Step 6: Update Sync Map
-
-Write `.ticktick-sync-map.yaml` with:
-- Updated `last_synced` timestamp
-- Updated `synced_from` from sprint-status.yaml `last_updated`
-- All stories with their `ticktick_id` and current `last_status`
-
-### Step 7: Generate Obsidian Sprint Dashboard
+### Step 2: Generate Obsidian Sprint Dashboard
 
 Write `sprint-dashboard.md` to the Obsidian vault with this structure:
 
@@ -133,9 +65,9 @@ Progress: <unicode progress bar> <percent>%
 
 ## <Epic Title> (<epic status>)
 
-| Story | Status | TickTick |
-|-------|--------|----------|
-| <display_title> | <status badge> | [link](https://ticktick.com/webapp/#p/<project_id>/tasks/<task_id>) |
+| Story | Status |
+|-------|--------|
+| <display_title> | <status badge> |
 
 <!-- Repeat per epic, active epics first, then completed in collapsed details -->
 
@@ -156,10 +88,10 @@ Progress: <unicode progress bar> <percent>%
 - `review` → `*review*`
 - `done` → `~~done~~`
 
-### Step 8: Report Summary
+### Step 3: Report Summary
 
 Print a summary:
-- Stories synced (new/updated/unchanged)
-- TickTick project link
+- Stories by status (done/in-progress/review/backlog counts)
+- Overall progress percentage
 - Obsidian dashboard path
 - Any errors encountered
